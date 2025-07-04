@@ -54,9 +54,7 @@ class Config:
         return issues
 
     def __str__(self) -> str:
-        return (
-            f"Config(output_dir={self.output_dir}, req_file={self.req_file})"
-        )
+        return f"Config(output_dir={self.output_dir}, req_file={self.req_file})"
 
 
 # Global configuration instance
