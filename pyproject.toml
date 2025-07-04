@@ -127,3 +127,6 @@ addopts = [
     "--cov-report=html",
     "--cov-fail-under=80"
 ]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/engineering_team"]
