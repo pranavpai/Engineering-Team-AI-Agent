@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  engineering-agent:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    container_name: engineering-ai-agent
+    volumes:
+      # Mount output directory to persist generated projects
+      - ./output:/app/output
+      # Mount requirements file for easy changes
+      - ./req.txt:/app/req.txt:ro
+      # Mount environment file if it exists
+      - ./.env:/app/.env:ro
+    environment:
+      # Environment variables can be overridden here
+      - PYTHONUNBUFFERED=1
+      - PYTHONPATH=/app/src
+    ports:
+      # Expose Gradio port for generated apps
+      - "7860:7860"
+    stdin_open: true
+    tty: true
+    
+  # Development service with mounted source code
+  engineering-agent-dev:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+      target: builder
+    container_name: engineering-ai-agent-dev
+    volumes:
+      # Mount source code for development
+      - ./src:/app/src
+      - ./output:/app/output
+      - ./req.txt:/app/req.txt:ro
+      - ./.env:/app/.env:ro
+      # Mount dependency files
+      - ./pyproject.toml:/app/pyproject.toml:ro
+    environment:
+      - PYTHONUNBUFFERED=1
+      - PYTHONPATH=/app/src
+    ports:
+      - "7860:7860"
+    stdin_open: true
+    tty: true
+    working_dir: /app
+    command: ["tail", "-f", "/dev/null"]  # Keep container running for development
+    profiles:
+      - dev
+
+volumes:
+  # Persistent volume for generated projects
+  engineering_output:
+    driver: local
+
+networks:
+  default:
+    name: engineering-agent-network

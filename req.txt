@@ -1,0 +1,32 @@
+Create a Task Management System for small teams:
+
+## Core Features:
+- User authentication and team management
+- Project and task creation with priorities
+- Real-time notifications for task updates
+- File attachment support for tasks
+- Progress tracking and reporting
+- Team collaboration features
+
+## Technical Requirements:
+- Web-based interface using modern UI framework
+- Database for persistent storage
+- Real-time updates using WebSocket or similar
+- Email notifications for important events
+- File upload and storage capabilities
+- User role management (admin, member, viewer)
+- Export functionality for reports and data
+
+## Integration Needs:
+- Email service for notifications
+- Cloud storage for file attachments
+- Optional: Calendar integration
+- Optional: Slack/Discord notifications
+
+## Performance & Security:
+- Handle up to 100 concurrent users
+- Secure authentication and authorization
+- Data backup and recovery
+- Responsive design for mobile/desktop
+
+Build this as a modular system with clean interfaces between components.
