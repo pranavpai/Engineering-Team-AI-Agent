@@ -29,7 +29,9 @@ jobs:
         echo "$HOME/.cargo/bin" >> $GITHUB_PATH
     
     - name: Set up Python ${{ matrix.python-version }}
-      run: uv python install ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
     
     - name: Install dependencies
       run: |
@@ -134,7 +136,9 @@ jobs:
         echo "$HOME/.cargo/bin" >> $GITHUB_PATH
     
     - name: Set up Python
-      run: uv python install 3.11
+      uses: actions/setup-python@v5
+      with:
+        python-version: 3.11
     
     - name: Install dependencies
       run: |
@@ -175,7 +179,9 @@ jobs:
         echo "$HOME/.cargo/bin" >> $GITHUB_PATH
     
     - name: Set up Python
-      run: uv python install 3.11
+      uses: actions/setup-python@v5
+      with:
+        python-version: 3.11
     
     - name: Install dependencies
       run: uv sync --dev
