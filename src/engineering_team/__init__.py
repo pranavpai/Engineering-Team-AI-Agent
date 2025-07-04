@@ -9,4 +9,10 @@ from .models import SystemArchitecture, ModuleSpec, ModuleCreationState
 from .crew import EngineeringTeam
 
 __version__ = "1.0.0"
-__all__ = ["EngineeringFlow", "SystemArchitecture", "ModuleSpec", "ModuleCreationState", "EngineeringTeam"]
+__all__ = [
+    "EngineeringFlow",
+    "SystemArchitecture",
+    "ModuleSpec",
+    "ModuleCreationState",
+    "EngineeringTeam",
+]

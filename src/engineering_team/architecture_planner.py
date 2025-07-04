@@ -2,6 +2,7 @@
 Architecture Planning Module for Engineering Team AI Agent
 Handles system architecture design and validation
 """
+
 import json
 import re
 from typing import Dict, Any
@@ -9,21 +10,24 @@ from crewai import Task, Crew, Process
 from .models import SystemArchitecture, ModuleCreationState
 from .crew import EngineeringTeam
 
+
 class ArchitecturePlanner:
     """Handles architecture planning and validation"""
-    
+
     def __init__(self, crew: EngineeringTeam):
         self.crew = crew
-    
+
     def plan_architecture(self, requirements: str) -> SystemArchitecture:
         """
         Create system architecture based on requirements
         """
         print(f"🏗️  Starting architecture planning...")
-        
+
         # Create the architecture planning task with dynamic prompt
-        requirements_summary = requirements[:2000] + "..." if len(requirements) > 2000 else requirements
-        
+        requirements_summary = (
+            requirements[:2000] + "..." if len(requirements) > 2000 else requirements
+        )
+
         architecture_task = Task(
             description=f"""
             Analyze the following software requirements and design a modular system architecture.
@@ -95,38 +99,38 @@ class ArchitecturePlanner:
             - Ensure modules have clear, single responsibilities
             """,
             expected_output="JSON system architecture tailored to the specific requirements",
-            agent=self.crew.engineering_lead()
+            agent=self.crew.engineering_lead(),
         )
-        
+
         # Execute the architecture task
         mini_crew = Crew(
             agents=[self.crew.engineering_lead()],
             tasks=[architecture_task],
             process=Process.sequential,
-            verbose=True
+            verbose=True,
         )
-        
+
         result = mini_crew.kickoff()
-        
+
         # Parse and validate the result
         architecture = self._parse_architecture_result(result)
         validated_architecture = self._validate_and_clean_architecture(architecture)
-        
+
         return validated_architecture
-    
+
     def _parse_architecture_result(self, result: Any) -> SystemArchitecture:
         """Parse the architecture result from the AI agent"""
         try:
             if isinstance(result, str):
                 # Extract JSON from the result if it's wrapped in other text
-                json_match = re.search(r'\{.*\}', result, re.DOTALL)
+                json_match = re.search(r"\{.*\}", result, re.DOTALL)
                 if json_match:
                     result = json_match.group()
                 arch_data = json.loads(result)
-            elif hasattr(result, 'raw'):
+            elif hasattr(result, "raw"):
                 # Handle CrewOutput object
                 raw_content = result.raw
-                json_match = re.search(r'\{.*\}', raw_content, re.DOTALL)
+                json_match = re.search(r"\{.*\}", raw_content, re.DOTALL)
                 if json_match:
                     arch_data = json.loads(json_match.group())
                 else:
@@ -134,42 +138,62 @@ class ArchitecturePlanner:
             else:
                 # Fallback: convert to string and extract JSON
                 raw_content = str(result)
-                json_match = re.search(r'\{.*\}', raw_content, re.DOTALL)
+                json_match = re.search(r"\{.*\}", raw_content, re.DOTALL)
                 if json_match:
                     arch_data = json.loads(json_match.group())
                 else:
                     arch_data = json.loads(raw_content)
-            
+
             architecture = SystemArchitecture(**arch_data)
             print(f"✅ Architecture created with {len(architecture.modules)} modules")
             return architecture
-            
+
         except Exception as e:
             print(f"❌ Error parsing architecture: {e}")
             print(f"Raw result: {result}")
             raise
-    
-    def _validate_and_clean_architecture(self, architecture: SystemArchitecture) -> SystemArchitecture:
+
+    def _validate_and_clean_architecture(
+        self, architecture: SystemArchitecture
+    ) -> SystemArchitecture:
         """Validate architecture and remove any UI modules"""
         # CRITICAL VALIDATION: Ensure no UI modules exist
-        ui_modules = [m for m in architecture.modules 
-                     if any(term in m.name.lower() for term in ['ui', 'interface', 'frontend', 'web', 'gui'])]
-        
+        ui_modules = [
+            m
+            for m in architecture.modules
+            if any(
+                term in m.name.lower()
+                for term in ["ui", "interface", "frontend", "web", "gui"]
+            )
+        ]
+
         if ui_modules:
-            print(f"🚫 ARCHITECTURE VIOLATION: UI modules detected: {[m.name for m in ui_modules]}")
+            print(
+                f"🚫 ARCHITECTURE VIOLATION: UI modules detected: {[m.name for m in ui_modules]}"
+            )
             print(f"🔧 Auto-removing UI modules to enforce Gradio-only architecture...")
-            
+
             # Force remove UI modules
-            architecture.modules = [m for m in architecture.modules 
-                                   if not any(term in m.name.lower() for term in ['ui', 'interface', 'frontend', 'web', 'gui'])]
-            
-            print(f"✅ Architecture cleaned: {len(architecture.modules)} business logic modules only")
-        
+            architecture.modules = [
+                m
+                for m in architecture.modules
+                if not any(
+                    term in m.name.lower()
+                    for term in ["ui", "interface", "frontend", "web", "gui"]
+                )
+            ]
+
+            print(
+                f"✅ Architecture cleaned: {len(architecture.modules)} business logic modules only"
+            )
+
         return architecture
-    
-    def create_module_state(self, architecture: SystemArchitecture) -> ModuleCreationState:
+
+    def create_module_state(
+        self, architecture: SystemArchitecture
+    ) -> ModuleCreationState:
         """Create and initialize the module creation state"""
         return ModuleCreationState(
             architecture=architecture,
-            pending_modules=[module.name for module in architecture.modules]
+            pending_modules=[module.name for module in architecture.modules],
         )
