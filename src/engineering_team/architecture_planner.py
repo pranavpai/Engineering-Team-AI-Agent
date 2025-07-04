@@ -169,9 +169,12 @@ class ArchitecturePlanner:
 
         if ui_modules:
             print(
-                f"🚫 ARCHITECTURE VIOLATION: UI modules detected: {[m.name for m in ui_modules]}"
+                "🚫 ARCHITECTURE VIOLATION: UI modules detected: "
+                f"{[m.name for m in ui_modules]}"
             )
-            print(f"🔧 Auto-removing UI modules to enforce Gradio-only architecture...")
+            print(
+                "🔧 Auto-removing UI modules to enforce Gradio-only architecture..."
+            )
 
             # Force remove UI modules
             architecture.modules = [
