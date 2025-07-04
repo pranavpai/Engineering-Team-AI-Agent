@@ -185,4 +185,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - Dependency management with [UV](https://github.com/astral-sh/uv)
 
 ---
-**⭐ Star this repo if it helped you build amazing applications!**
+**⭐ Star this repo if it helped you build amazing applications!**# Trigger workflow
